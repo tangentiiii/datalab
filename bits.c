@@ -134,7 +134,7 @@ NOTES:
 
 
 #endif
-//1
+/* //1 */
 /* 
  * bitXor - x^y using only ~ and & 
  *   Example: bitXor(4, 5) = 1
@@ -160,7 +160,7 @@ int tmin(void) {
   return  1 << 31;
 
 }
-//2
+/* //2 */
 /*
  * isTmax - returns 1 if x is the maximum, two's complement number,
  *     and 0 otherwise 
@@ -202,7 +202,7 @@ int allOddBits(int x) {
 int negate(int x) {
   return ~x + 1;
 }
-//3
+/* //3 */
 /* 
  * isAsciiDigit - return 1 if 0x30 <= x <= 0x39 (ASCII codes for characters '0' to '9')
  *   Example: isAsciiDigit(0x35) = 1.
@@ -251,7 +251,7 @@ int isLessOrEqual(int x, int y) {
   cond = cond | (!diff_sign & !!((diff >> 31) & 1)); /* //需要same_sign，在这里起到shortcut的作用！确保在符号不同时，不进行这一步 */
   return cond;
 }
-//4
+/* //4 */
 /* 
  * logicalNeg - implement the ! operator, using all of 
  *              the legal operators except !
@@ -332,7 +332,7 @@ int howManyBits(int x) {
   ans = ans + (1 & y_mask);
   return ans;
 }
-//float
+/* //float */
 /* 
  * floatScale2 - Return bit-level equivalent of expression 2*f for
  *   floating point argument f.
