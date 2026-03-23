@@ -244,11 +244,11 @@ int isLessOrEqual(int x, int y) {
   int cond = !(x^y); //equal
   int sign_x = (x >> 31) & 1;
   int sign_y = (y >> 31) & 1;
-  int same_sign = sign_x ^ sign_y;
+  int same_sign = (sign_x ^ sign_y);
   int diff = x + (~y) + 1; //注意正溢出问题
-  cond = cond | same_sign & sign_x; //如果x,y符号相反，且x为负数，则return 1; x为正数,则return 0;
+  cond = cond | (same_sign & sign_x); //如果x,y符号相反，且x为负数，则return 1; x为正数,则return 0;
   
-  cond = cond | (same_sign & !!((diff >> 31) & 1)); //需要same_sign，在这里起到shortcut的作用！确保在符号不同时，不进行这一步
+  cond = cond | (!same_sign & !!((diff >> 31) & 1)); //需要same_sign，在这里起到shortcut的作用！确保在符号不同时，不进行这一步
   return cond;
 }
 //4
@@ -294,7 +294,7 @@ int howManyBits(int x) {
   int next_x = 0;
   int z_mask = 0;
   int y_mask = 0;
-  
+
   x = (x & ~mask) | (~x & mask);
 
   next_x = x >> 16;
