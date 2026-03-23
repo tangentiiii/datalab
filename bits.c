@@ -169,10 +169,10 @@ int tmin(void) {
  *   Rating: 1
  */
 int isTmax(int x) {
-  //利用Tmax的性质: TMax + 1 = TMin, TMax ^ TMin = -1 (全1)
+  /* //利用Tmax的性质: TMax + 1 = TMin, TMax ^ TMin = -1 (全1)
   //可以通过 !(~z) 将 全1/非全1 转化为 1/0
   //需要注意的是, 满足上式的还有 -1 + 1 = 0, -1 ^ 0 = -1 (全1)
-  //怎么证明满足这个条件的只有这两种情况？（一个数+1之后的结果和自己按位完全相反）
+  //怎么证明满足这个条件的只有这两种情况？（一个数+1之后的结果和自己按位完全相反） */
   int y = x + 1;
   return !(~(x ^ y)) & !!y;
 }
@@ -189,8 +189,8 @@ int allOddBits(int x) {
   mask = mask | (mask << 8);
   mask = mask | (mask << 16);
   return !(mask ^ (x & mask));
-  // int y = x & mask;
-  // return !~(y | (y >> 1))
+  /* // int y = x & mask;
+  // return !~(y | (y >> 1)) */
 }
 /* 
  * negate - return -x 
@@ -225,11 +225,11 @@ int isAsciiDigit(int x) {
  *   Rating: 3
  */
 int conditional(int x, int y, int z) {
-  //思路：
+  /* //思路：
   //先想到将conditional转化成(y & y_mask) | (z & z_mask)的形式
   //x == 0则 y_mask = 0, z_mask = 11..1, etc
-  //再来想mask怎么用x来表示
-  int y_mask = ~(!x) + ((!x) << 1); //可以直接用~z_mask
+  //再来想mask怎么用x来表示 */
+  int y_mask = ~(!x) + ((!x) << 1); /* //可以直接用~z_mask */
   int z_mask = ~(!x) + 1;
   return (y & y_mask) | (z & z_mask);
 }
@@ -241,14 +241,14 @@ int conditional(int x, int y, int z) {
  *   Rating: 3
  */
 int isLessOrEqual(int x, int y) {
-  int cond = !(x^y); //equal
+  int cond = !(x^y); /* //equal */
   int sign_x = (x >> 31) & 1;
   int sign_y = (y >> 31) & 1;
-  int same_sign = (sign_x ^ sign_y);
-  int diff = x + (~y) + 1; //注意正溢出问题
-  cond = cond | (same_sign & sign_x); //如果x,y符号相反，且x为负数，则return 1; x为正数,则return 0;
+  int diff_sign = (sign_x ^ sign_y);
+  int diff = x + (~y) + 1; /* //注意正溢出问题 */
+  cond = cond | (diff_sign & sign_x); /* //如果x,y符号相反，且x为负数，则return 1; x为正数,则return 0; */
   
-  cond = cond | (!same_sign & !!((diff >> 31) & 1)); //需要same_sign，在这里起到shortcut的作用！确保在符号不同时，不进行这一步
+  cond = cond | (!diff_sign & !!((diff >> 31) & 1)); /* //需要same_sign，在这里起到shortcut的作用！确保在符号不同时，不进行这一步 */
   return cond;
 }
 //4
@@ -261,13 +261,13 @@ int isLessOrEqual(int x, int y) {
  *   Rating: 4 
  */
 int logicalNeg(int x) {
-  //思路：一个数x是否为0的判断方法：x和-x的符号位都是0，当且仅当x=0
+  /* //思路：一个数x是否为0的判断方法：x和-x的符号位都是0，当且仅当x=0 */
   int sign_x = (x >> 31) & 1;
   int sign_neg_x = ((~x + 1) >> 31) & 1;
   int temp = sign_neg_x | sign_x;
-  //或者直接将x和-x放在一起：
-  //combine_sign = (x | (~x + 1)) >> 31;
-  return ~temp + 2;// return temp ^ 1; 利用^1来翻转0，1
+  /* //或者直接将x和-x放在一起：
+  //combine_sign = (x | (~x + 1)) >> 31; */
+  return ~temp + 2; /* // return temp ^ 1; 利用^1来翻转0，1 */
 }
 /* howManyBits - return the minimum number of bits required to represent x in
  *             two's complement
@@ -282,14 +282,14 @@ int logicalNeg(int x) {
  *  Rating: 4
  */
 int howManyBits(int x) {
-  int ans = 1; //符号位
+  int ans = 1; /* //符号位 */
   /*
   int sign = (x >> 31) & 1;
   int mask = (~!sign + 1); //sign = 0, mask = 11..1
   x = (x & mask) | (~x & ~mask); //x为正数则不变，x为负数则x = ~x
   */
 
-  //利用符号位+算数右移构建mask
+  /* //利用符号位+算数右移构建mask */
   int mask = x >> 31;
   int next_x = 0;
   int z_mask = 0;
@@ -300,7 +300,7 @@ int howManyBits(int x) {
   next_x = x >> 16;
   z_mask = ~(!next_x) + 1;
   y_mask = ~z_mask;
-  x = (next_x & y_mask) | (x & z_mask); // x = (x >> 16) ? (x >> 16) : x
+  x = (next_x & y_mask) | (x & z_mask); /* // x = (x >> 16) ? (x >> 16) : x */
   ans = ans + (16 & y_mask);
 
   next_x = x >> 8;
@@ -345,13 +345,13 @@ int howManyBits(int x) {
  *   Rating: 4
  */
 unsigned floatScale2(unsigned uf) {
-  if((uf & 0x7f800000) == 0x7f800000) // E =11111111, NaN
+  if((uf & 0x7f800000) == 0x7f800000) /* // E =11111111, NaN */
     return uf;
-  //if(!uf) return uf; // 0 在denorm中有讨论
-  if(((uf >> 23) << 24) == 0) // denorm：很巧妙的不需要讨论scale之后是denorm还是norm--操作是相同的。
+  /* //if(!uf) return uf; // 0 在denorm中有讨论 */
+  if(((uf >> 23) << 24) == 0) /* // denorm：很巧妙的不需要讨论scale之后是denorm还是norm--操作是相同的。 */
     {
-      return (uf & 0xff800000) | ((uf & 0x007fffff) << 1); //保留符号位和 0 阶码，尾数左移 1 位，溢出部分自动顶进阶码位
-      //更节省：return (uf << 1) | (uf & 0x80000000)
+      return (uf & 0xff800000) | ((uf & 0x007fffff) << 1); /* //保留符号位和 0 阶码，尾数左移 1 位，溢出部分自动顶进阶码位 */
+      /* //更节省：return (uf << 1) | (uf & 0x80000000) */
     }
   return uf + 0x00800000;
 }
@@ -370,11 +370,11 @@ unsigned floatScale2(unsigned uf) {
 int floatFloat2Int(unsigned uf) {
   int sign = uf & 0x80000000;
   int exp = (uf & 0x7f800000) >> 23;
-  int E = exp - 127; //denorm会直接round to zero
+  int E = exp - 127; /* //denorm会直接round to zero */
   int frac = uf & 0x007fffff;
   int M = frac;
 
-  if(exp) //exp != 0, uf是norm
+  if(exp) /* //exp != 0, uf是norm */
       M = frac + 0x00800000;
   if(E >= 0)
   {
@@ -382,7 +382,7 @@ int floatFloat2Int(unsigned uf) {
     else if(E <= 30) M = M << (E - 23);
     else return 0x80000000u;
   }
-  else return 0; // E < 0的时候，round to zero;
+  else return 0; /* // E < 0的时候，round to zero; */
   if(sign)   M = ~M + 1;
   return M;
 }
@@ -400,10 +400,10 @@ int floatFloat2Int(unsigned uf) {
  *   Rating: 4
  */
 unsigned floatPower2(int x) {
-  // 2.0 ^ x = 1.0 * 2 ^ (x + 127 - Bias)
-    //unsigned a = 0x40000000;
-    if(x >= 0x00000080) return 0x7f800000u; //+inf
-    else if(x >= -126) return (127 + x) << 23; //norm
-    else if(x >= -149) return 0x00000001 << (x + 149); //denorm
-    return 0; //less than denorm
+  /* // 2.0 ^ x = 1.0 * 2 ^ (x + 127 - Bias)
+    //unsigned a = 0x40000000; */
+    if(x >= 0x00000080) return 0x7f800000u; /* //+inf */
+    else if(x >= -126) return (127 + x) << 23; /* //norm */
+    else if(x >= -149) return 0x00000001 << (x + 149); /* //denorm */
+    return 0; /* //less than denorm */
 }
